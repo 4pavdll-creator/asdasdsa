@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zombies Rust Tweaks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#020202;
+      --panel:rgba(10,10,12,.62);
+      --panel2:rgba(21,14,8,.72);
+      --line:rgba(255,255,255,.12);
+      --rust:#c2410c;
+      --orange:#f97316;
+      --amber:#fbbf24;
+      --cream:#fff7cc;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    html,body{margin:0;min-height:100%;background:#000;color:var(--cream);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;z-index:-5;background:radial-gradient(circle at 72% 32%,rgba(251,146,60,.20),transparent 32%),radial-gradient(circle at 16% 75%,rgba(124,45,18,.30),transparent 34%),linear-gradient(135deg,#000 0%,#090502 45%,#020202 100%)}
+    body:after{content:"";position:fixed;inset:0;z-index:-4;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:82px 82px;opacity:.19;mask-image:linear-gradient(to bottom,transparent,black 12%,black 88%,transparent)}
+    .orb{position:fixed;inset:-25%;z-index:-3;background:radial-gradient(circle at 50% 50%,rgba(251,191,36,.11),transparent 18%);filter:blur(30px);animation:orb 9s ease-in-out infinite alternate;pointer-events:none}@keyframes orb{from{transform:translate(-2%,1%) rotate(0) scale(1)}to{transform:translate(2%,-1%) rotate(8deg) scale(1.08)}}
+    .industrial{font-family:"Arial Black",Impact,system-ui,sans-serif;text-transform:uppercase;letter-spacing:-.075em}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;text-transform:uppercase;letter-spacing:.16em}.glass{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.025));box-shadow:0 30px 90px rgba(0,0,0,.52);backdrop-filter:blur(20px)}
+    .premium-border{position:relative}.premium-border:before{content:"";position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(135deg,rgba(251,191,36,.55),rgba(249,115,22,.08),rgba(255,255,255,.18));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .fade-up{animation:fadeUp .78s cubic-bezier(.16,1,.3,1) both}@keyframes fadeUp{from{opacity:0;transform:translateY(24px);filter:blur(10px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+    .floaty{animation:floaty 5.5s ease-in-out infinite}@keyframes floaty{0%,100%{transform:translateY(-8px) rotate(-.45deg)}50%{transform:translateY(8px) rotate(.45deg)}}
+    .shine{position:relative;overflow:hidden}.shine:after{content:"";position:absolute;inset:-50%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:translateX(-70%) rotate(15deg);animation:shine 6s ease-in-out infinite}@keyframes shine{0%,45%{transform:translateX(-80%) rotate(15deg)}60%,100%{transform:translateX(80%) rotate(15deg)}}
+    .nav-blur{background:rgba(5,5,6,.58);backdrop-filter:blur(22px);box-shadow:0 20px 70px rgba(0,0,0,.45)}
+    .hero-title{font-size:clamp(50px,8vw,108px);line-height:.78;text-shadow:0 0 35px rgba(251,191,36,.18)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 20px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff7cc;text-decoration:none;font-weight:950;text-transform:uppercase;letter-spacing:.08em;font-size:12px;transition:.18s ease}.btn:hover{transform:translateY(-2px);border-color:rgba(251,191,36,.55);background:rgba(251,191,36,.13);box-shadow:0 16px 50px rgba(251,146,60,.16)}.btn-primary{background:linear-gradient(135deg,#fde68a,#f97316 58%,#7c2d12);color:#060606;border-color:rgba(251,191,36,.55)}
+    .stat{border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.28);border-radius:20px;padding:16px}.stat small{display:block;color:rgba(254,243,199,.45);font-size:10px}.stat b{display:block;margin-top:6px;color:#fde68a;font-size:24px;line-height:1}.visual-shell{position:relative;overflow:hidden;min-height:520px}.visual-shell:before{content:"";position:absolute;inset:-25%;background:radial-gradient(circle at 50% 38%,rgba(251,191,36,.35),transparent 35%),conic-gradient(from 90deg,transparent,rgba(249,115,22,.22),transparent,rgba(124,45,18,.28),transparent);filter:blur(35px)}.visual-shell:after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.08),transparent 28%,rgba(0,0,0,.32));pointer-events:none}
+    .scan{position:absolute;inset:0;opacity:.28;pointer-events:none;overflow:hidden}.scan:before{content:"";position:absolute;inset-inline:0;height:38%;background:linear-gradient(to bottom,transparent,rgba(251,191,36,.19),transparent);animation:scan 5.4s linear infinite}@keyframes scan{from{transform:translateY(-120%)}to{transform:translateY(280%)}}
+    .pack{transition:.2s cubic-bezier(.16,1,.3,1)}.pack:hover{transform:translateY(-6px);border-color:rgba(251,191,36,.55);box-shadow:0 30px 90px rgba(0,0,0,.55),0 0 0 1px rgba(251,191,36,.16)}.tag{border:1px solid rgba(251,191,36,.22);background:rgba(251,191,36,.08);color:#fde68a;border-radius:999px;padding:6px 10px;font-size:10px}.marquee{overflow:hidden;white-space:nowrap;mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent)}.marquee-track{display:inline-flex;gap:18px;animation:marquee 22s linear infinite}.marquee span{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.04);border-radius:999px;padding:10px 14px;color:rgba(254,243,199,.62);font-size:11px}@keyframes marquee{to{transform:translateX(-50%)}}
+    .loader{--path:rgba(255,255,255,.22);--dot:var(--amber);--duration:3s;position:relative;display:inline-block;height:38px;width:38px}.loader:before{content:"";position:absolute;z-index:2;top:31px;left:16px;display:block;height:5px;width:5px;border-radius:999px;background:var(--dot);box-shadow:0 0 18px rgba(251,191,36,.95)}.loader svg{display:block;height:100%;width:100%}.loader svg circle,.loader svg rect,.loader svg polygon{fill:none;stroke:var(--path);stroke-linecap:round;stroke-linejoin:round;stroke-width:10px}.loader.circle:before{display:none}@keyframes pathCircle{25%{stroke-dashoffset:125}50%{stroke-dashoffset:175}75%{stroke-dashoffset:225}100%{stroke-dashoffset:275}}@keyframes pathTriangle{33%{stroke-dashoffset:74}66%{stroke-dashoffset:147}100%{stroke-dashoffset:221}}@keyframes pathRect{25%{stroke-dashoffset:64}50%{stroke-dashoffset:128}75%{stroke-dashoffset:192}100%{stroke-dashoffset:256}}@keyframes dotTriangle{33%{transform:translate(0,0)}66%{transform:translate(10px,-18px)}100%{transform:translate(-10px,-18px)}}@keyframes dotRect{25%{transform:translate(0,0)}50%{transform:translate(18px,-18px)}75%{transform:translate(0,-36px)}100%{transform:translate(-18px,-18px)}}.loader.circle svg circle{stroke-dasharray:150 50 150 50;stroke-dashoffset:75;animation:pathCircle var(--duration) cubic-bezier(.785,.135,.15,.86) infinite}.loader.triangle{width:42px}.loader.triangle:before{top:33px;left:18px;transform:translate(-10px,-18px);animation:dotTriangle var(--duration) cubic-bezier(.785,.135,.15,.86) infinite}.loader.triangle svg polygon{stroke-dasharray:145 76 145 76;animation:pathTriangle var(--duration) cubic-bezier(.785,.135,.15,.86) infinite}.loader.rect:before{transform:translate(-18px,-18px);animation:dotRect var(--duration) cubic-bezier(.785,.135,.15,.86) infinite}.loader.rect svg rect{stroke-dasharray:192 64 192 64;animation:pathRect var(--duration) cubic-bezier(.785,.135,.15,.86) infinite}
+    @media(max-width:900px){.hero-grid{grid-template-columns:1fr!important}.visual-shell{min-height:360px}.packs{grid-template-columns:1fr!important}.hero-title{font-size:58px}.headline-holder{height:92px!important}.nav-links{display:none}.stat-grid{grid-template-columns:1fr!important}}
+  </style>
+</head>
+<body>
+  <div class="orb"></div>
+  <main class="relative min-h-screen overflow-hidden">
+    <canvas id="shader" class="fixed inset-0 h-full w-full opacity-70" style="background:black"></canvas>
+    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_38%,rgba(249,115,22,.18),transparent_34%),linear-gradient(to_bottom,rgba(0,0,0,.05),rgba(0,0,0,.95))]"></div>
+
+    <div id="loaderOverlay" class="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-black transition duration-700">
+      <canvas id="loaderShader" class="absolute inset-0 h-full w-full opacity-80" style="background:black"></canvas>
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(251,191,36,.22),transparent_44%),linear-gradient(to_bottom,rgba(0,0,0,.12),rgba(0,0,0,.92))]"></div>
+      <div class="relative z-10 flex flex-col items-center gap-6 rounded-[2rem] border border-white/10 bg-black/35 px-9 py-8 shadow-2xl backdrop-blur-2xl premium-border">
+        <div class="flex items-center justify-center gap-3"><div class="loader circle"><svg viewBox="0 0 80 80"><circle r="32" cy="40" cx="40"></circle></svg></div><div class="loader triangle"><svg viewBox="0 0 86 80"><polygon points="43 8 79 72 7 72"></polygon></svg></div><div class="loader rect"><svg viewBox="0 0 80 80"><rect height="64" width="64" y="8" x="8"></rect></svg></div></div>
+        <div class="relative h-12 w-72" data-gooey-small='["LOADING","RUST","TWEAKS"]'></div>
+        <p class="mono text-[10px] text-amber-100/55">@nazizombiess</p>
+      </div>
+    </div>
+
+    <nav class="nav-blur fixed left-1/2 top-5 z-40 flex w-[calc(100%-2rem)] max-w-6xl -translate-x-1/2 items-center justify-between rounded-full border border-white/10 px-4 py-3">
+      <a href="#top" class="mono text-xs font-black text-amber-100 no-underline">@nazizombiess</a>
+      <div class="nav-links flex items-center gap-2 text-[10px] uppercase tracking-[.22em] text-zinc-500"><a class="px-3 py-2 text-zinc-400 no-underline hover:text-amber-100" href="#packs">packs</a><a class="px-3 py-2 text-zinc-400 no-underline hover:text-amber-100" href="#results">results</a><a class="px-3 py-2 text-zinc-400 no-underline hover:text-amber-100" href="#contact">contact</a></div>
+    </nav>
+
+    <section id="top" class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-8 px-5 pb-16 pt-28">
+      <div class="hero-grid grid items-center gap-6 lg:grid-cols-[1.05fr_.95fr]">
+        <article class="glass premium-border fade-up rounded-[2.4rem] p-6 sm:p-8 lg:p-10">
+          <h1 class="industrial hero-title m-0 bg-gradient-to-b from-white via-amber-100 to-orange-500 bg-clip-text text-transparent">Zombie<br/>Tweaks</h1>
+          <div class="headline-holder relative mt-3 h-20 w-full" data-gooey='["0 DELAY FEEL","MAX FPS","SMOOTH RUST"]'></div>
+          <div class="stat-grid mt-7 grid gap-3 sm:grid-cols-3">
+            <div class="stat"><small class="mono">FPS</small><b class="industrial">Boost</b></div>
+            <div class="stat"><small class="mono">Feel</small><b class="industrial">0 delay</b></div>
+            <div class="stat"><small class="mono">Setup</small><b class="industrial">Clean</b></div>
+          </div>
+        </article>
+
+        <aside class="visual-shell glass premium-border fade-up rounded-[2.4rem]" style="animation-delay:.12s">
+          <div class="scan"></div>
+          <svg class="floaty relative z-10 h-full w-full p-7 drop-shadow-[0_34px_90px_rgba(0,0,0,.92)]" viewBox="0 0 560 560" role="img" aria-label="Premium Rust tweaks industrial graphic">
+            <defs>
+              <linearGradient id="metal" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#fff7cc"/><stop offset="18%" stop-color="#fbbf24"/><stop offset="56%" stop-color="#c2410c"/><stop offset="100%" stop-color="#080808"/></linearGradient>
+              <linearGradient id="darkplate" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#241006"/><stop offset="50%" stop-color="#4a1d05"/><stop offset="100%" stop-color="#050505"/></linearGradient>
+              <filter id="glowPremium"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <rect x="64" y="64" width="432" height="432" rx="54" fill="url(#darkplate)" stroke="#fbbf24" stroke-opacity=".36" stroke-width="2"/>
+            <rect x="88" y="88" width="384" height="384" rx="42" fill="none" stroke="#fff7cc" stroke-opacity=".08" stroke-width="2"/>
+            <path d="M112 160H448M112 400H448M160 112V448M400 112V448" stroke="#fbbf24" stroke-opacity=".10" stroke-width="9"/>
+            <circle cx="280" cy="280" r="164" fill="none" stroke="#fbbf24" stroke-opacity=".16" stroke-width="2"/>
+            <circle cx="280" cy="280" r="112" fill="none" stroke="#fbbf24" stroke-opacity=".46" stroke-width="3" stroke-dasharray="18 11"/>
+            <path d="M280 116v70M280 374v70M116 280h70M374 280h70" stroke="#fbbf24" stroke-width="8" stroke-linecap="round" filter="url(#glowPremium)"/>
+            <path d="M206 244h148l-30 100h-88z" fill="url(#metal)" stroke="#fff7cc" stroke-opacity=".22" stroke-width="2"/>
+            <path d="M226 244l14-46h80l14 46" fill="none" stroke="#fde68a" stroke-opacity=".84" stroke-width="10" stroke-linecap="round"/>
+            <text x="280" y="292" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="62" fill="#fff3b0" letter-spacing="-3">RUST</text>
+            <text x="280" y="338" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="22" fill="#fbbf24" letter-spacing="7">ZERO BLOAT</text>
+            <circle cx="122" cy="122" r="8" fill="#fbbf24"/><circle cx="438" cy="122" r="8" fill="#fbbf24"/><circle cx="122" cy="438" r="8" fill="#fbbf24"/><circle cx="438" cy="438" r="8" fill="#fbbf24"/>
+          </svg>
+        </aside>
+      </div>
+
+      <div class="marquee glass rounded-full px-3 py-3">
+        <div class="marquee-track">
+          <span class="mono">fps config</span><span class="mono">input feel</span><span class="mono">windows cleanup</span><span class="mono">power plan</span><span class="mono">latency killer</span><span class="mono">smooth frames</span>
+          <span class="mono">fps config</span><span class="mono">input feel</span><span class="mono">windows cleanup</span><span class="mono">power plan</span><span class="mono">latency killer</span><span class="mono">smooth frames</span>
+        </div>
+      </div>
+
+      <section id="packs" class="packs grid gap-4 md:grid-cols-3">
+        <article class="pack glass shine rounded-[2rem] p-5 fade-up" style="animation-delay:.18s"><div class="flex items-start justify-between gap-4"><div><span class="tag mono">entry</span><h3 class="mt-5 text-2xl font-semibold italic tracking-wide text-white">Starter</h3><p class="mt-2 text-sm leading-6 text-zinc-400">Clean baseline tune for Rust and Windows.</p></div><b class="industrial text-4xl text-amber-100">$10</b></div><div class="relative mt-5 h-8" data-gooey-card='["STARTER","FPS","BASIC"]'></div><ul class="mt-5 space-y-2 text-sm text-zinc-400"><li>• Game DVR off</li><li>• Temp cleanup</li><li>• Basic Rust launch setup</li></ul></article>
+        <article class="pack glass premium-border rounded-[2rem] p-5 fade-up ring-1 ring-amber-200/20" style="animation-delay:.24s"><div class="flex items-start justify-between gap-4"><div><span class="tag mono">popular</span><h3 class="mt-5 text-2xl font-semibold italic tracking-wide text-white">Booster</h3><p class="mt-2 text-sm leading-6 text-zinc-400">The smooth-feel setup for daily Rust.</p></div><b class="industrial text-4xl text-amber-100">$25</b></div><div class="relative mt-5 h-8" data-gooey-card='["BOOSTER","0 DELAY","SMOOTH"]'></div><ul class="mt-5 space-y-2 text-sm text-zinc-400"><li>• Priority tuning</li><li>• Power plan setup</li><li>• Input feel cleanup</li></ul></article>
+        <article class="pack glass shine rounded-[2rem] p-5 fade-up" style="animation-delay:.30s"><div class="flex items-start justify-between gap-4"><div><span class="tag mono">custom</span><h3 class="mt-5 text-2xl font-semibold italic tracking-wide text-white">Private</h3><p class="mt-2 text-sm leading-6 text-zinc-400">A custom pass built around your PC.</p></div><b class="industrial text-4xl text-amber-100">$45</b></div><div class="relative mt-5 h-8" data-gooey-card='["PRIVATE","1 OF 1","BUILD"]'></div><ul class="mt-5 space-y-2 text-sm text-zinc-400"><li>• Personalized config</li><li>• Process cleanup</li><li>• Follow-up adjustments</li></ul></article>
+      </section>
+
+      <section id="results" class="grid gap-4 md:grid-cols-3">
+        <div class="glass rounded-[1.6rem] p-5"><small class="mono text-zinc-500">target</small><b class="industrial mt-2 block text-3xl text-amber-100">FPS</b></div>
+        <div class="glass rounded-[1.6rem] p-5"><small class="mono text-zinc-500">feel</small><b class="industrial mt-2 block text-3xl text-amber-100">0 delay</b></div>
+        <div class="glass rounded-[1.6rem] p-5"><small class="mono text-zinc-500">delivery</small><b class="industrial mt-2 block text-3xl text-amber-100">fast</b></div>
+      </section>
+
+      <section id="contact" class="glass premium-border rounded-[2rem] p-5 sm:p-6">
+        <div class="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+          <div><div class="relative h-10 w-80 max-w-[80vw]" data-gooey-card='["DM TO BUY","@NAZIZOMBIESS","ONLINE"]'></div></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    function setupGooey(el){const texts=JSON.parse(el.dataset.gooey||el.dataset.gooeySmall||el.dataset.gooeyCard);const filterId='threshold-'+Math.random().toString(36).slice(2);const small=el.dataset.gooeySmall!==undefined,card=el.dataset.gooeyCard!==undefined;const cls=small?'text-4xl':card?'text-2xl sm:text-3xl':'text-4xl sm:text-5xl md:text-6xl';el.innerHTML='<svg class="absolute h-0 w-0"><defs><filter id="'+filterId+'"><feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 255 -140" /></filter></defs></svg><div class="flex h-full items-center justify-center md:justify-start" style="filter:url(#'+filterId+')"><span class="absolute inline-block select-none text-center uppercase text-amber-200 font-black tracking-[-.07em] '+cls+'"></span><span class="absolute inline-block select-none text-center uppercase text-amber-200 font-black tracking-[-.07em] '+cls+'"></span></div>';const s=el.querySelectorAll('span');let i=texts.length-1,t=new Date(),m=0,c=.2;function set(f){s[1].style.filter=`blur(${Math.min(8/f-8,100)}px)`;s[1].style.opacity=`${Math.pow(f,.4)*100}%`;f=1-f;s[0].style.filter=`blur(${Math.min(8/f-8,100)}px)`;s[0].style.opacity=`${Math.pow(f,.4)*100}%`}function cool(){m=0;s[1].style.filter='';s[1].style.opacity='100%';s[0].style.filter='';s[0].style.opacity='0%'}function morph(){m-=c;c=0;let f=m/.82;if(f>1){c=.2;f=1}set(f)}function loop(){requestAnimationFrame(loop);const n=new Date(),inc=c>0,dt=(n-t)/1000;t=n;c-=dt;if(c<=0){if(inc){i=(i+1)%texts.length;s[0].textContent=texts[i%texts.length];s[1].textContent=texts[(i+1)%texts.length]}morph()}else cool()}s[0].textContent=texts[0];s[1].textContent=texts[1%texts.length];loop()}document.querySelectorAll('[data-gooey],[data-gooey-small],[data-gooey-card]').forEach(setupGooey);
+    const frag=`precision mediump float;varying vec2 vUv;uniform float u_time;uniform float u_ratio;uniform vec2 u_pointer_position;uniform vec3 u_color;uniform float u_speed;vec2 rotate(vec2 uv,float th){return mat2(cos(th),sin(th),-sin(th),cos(th))*uv;}float neuro_shape(vec2 uv,float t,float p){vec2 sine_acc=vec2(0.0);vec2 res=vec2(0.0);float scale=8.0;for(int j=0;j<15;j++){uv=rotate(uv,1.0);sine_acc=rotate(sine_acc,1.0);vec2 layer=uv*scale+float(j)+sine_acc-t;sine_acc+=sin(layer)+2.4*p;res+=(0.5+0.5*cos(layer))/scale;scale*=1.2;}return res.x+res.y;}void main(){vec2 uv=0.5*vUv;uv.x*=u_ratio;vec2 pointer=vUv-u_pointer_position;pointer.x*=u_ratio;float p=clamp(length(pointer),0.0,1.0);p=0.5*pow(1.0-p,2.0);float t=u_speed*u_time;vec3 col=vec3(0.0);float noise=neuro_shape(uv,t,p);noise=1.2*pow(noise,3.0);noise+=pow(noise,10.0);noise=max(0.0,noise-0.5);noise*=(1.0-length(vUv-0.5));col=u_color*noise;gl_FragColor=vec4(col,noise);}`;
+    const vert=`precision mediump float;varying vec2 vUv;attribute vec2 a_position;void main(){vUv=0.5*(a_position+1.0);gl_Position=vec4(a_position,0.0,1.0);}`;
+    function startShader(canvas){const gl=canvas.getContext('webgl')||canvas.getContext('experimental-webgl');if(!gl)return;const pointer={x:0,y:0,tX:0,tY:0};const vs=gl.createShader(gl.VERTEX_SHADER);gl.shaderSource(vs,vert);gl.compileShader(vs);const fs=gl.createShader(gl.FRAGMENT_SHADER);gl.shaderSource(fs,frag);gl.compileShader(fs);const p=gl.createProgram();gl.attachShader(p,vs);gl.attachShader(p,fs);gl.linkProgram(p);gl.useProgram(p);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);const loc=gl.getAttribLocation(p,'a_position');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);const uTime=gl.getUniformLocation(p,'u_time'),uRatio=gl.getUniformLocation(p,'u_ratio'),uPointer=gl.getUniformLocation(p,'u_pointer_position'),uColor=gl.getUniformLocation(p,'u_color'),uSpeed=gl.getUniformLocation(p,'u_speed');gl.uniform3f(uColor,1.0,0.43,0.04);gl.uniform1f(uSpeed,0.001);function resize(){const dpr=Math.min(devicePixelRatio,2);canvas.width=innerWidth*dpr;canvas.height=innerHeight*dpr;gl.viewport(0,0,canvas.width,canvas.height);gl.uniform1f(uRatio,canvas.width/canvas.height)}function update(x,y){pointer.tX=x;pointer.tY=y}addEventListener('pointermove',e=>update(e.clientX,e.clientY));addEventListener('click',e=>update(e.clientX,e.clientY));addEventListener('touchmove',e=>{if(e.targetTouches[0])update(e.targetTouches[0].clientX,e.targetTouches[0].clientY)});resize();addEventListener('resize',resize);function loop(now){pointer.x+=(pointer.tX-pointer.x)*0.2;pointer.y+=(pointer.tY-pointer.y)*0.2;gl.uniform1f(uTime,now);gl.uniform2f(uPointer,pointer.x/innerWidth,1-pointer.y/innerHeight);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);requestAnimationFrame(loop)}loop(0)}
+    startShader(document.getElementById('shader'));startShader(document.getElementById('loaderShader'));setTimeout(()=>{const o=document.getElementById('loaderOverlay');o.style.opacity=0;o.style.filter='blur(16px)';setTimeout(()=>o.remove(),700)},1350);
+  </script>
+</body>
+</html>
